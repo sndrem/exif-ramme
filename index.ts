@@ -2,6 +2,7 @@ import {extractExifData} from "./service/exifService";
 import {addExifDataToImage} from "./service/imageService";
 import {Command, Option} from "@commander-js/extra-typings";
 const path = require("path");
+import fs from "fs";
 
 const program = new Command()
   .name("Exif-ramme")
@@ -9,7 +10,7 @@ const program = new Command()
   .description(
     "Legger ramme med exif-informasjon på bilder du legger i mappen 'images'"
   )
-  .requiredOption("-i, --image <image file>", "File name of image")
+  .option("-i, --image <image file>", "File name of image")
   .option(
     "-p, --photographer <name of photographer>",
     "Name of the photographer"
@@ -30,6 +31,10 @@ const program = new Command()
       "-o, --output <output folder>",
       "The folder where the images will be stored"
     ).default("output")
+  )
+  .option(
+    "-b, --batch",
+    "Run the same settings on all images in the <image> folder"
   );
 
 program.parse(process.argv);
@@ -45,8 +50,24 @@ function processImage(
   addExifDataToImage(imagePath, exifData, outputPath, options);
 }
 
-const imageName = path.basename(options.image);
-const inputImagePath = `${__dirname}/${options.folder}/${imageName}`; // Provide your input image path here
-const outputImagePath = `${__dirname}/${options.output}/${imageName}`; // Output image path
+if (!options.image && !options.batch) {
+  throw new Error(
+    "Du må sette enten -i eller -b for hhv. image eller batch av alle bilder"
+  );
+}
 
-processImage(inputImagePath, outputImagePath, options);
+if (options.batch) {
+  const imageFolderPath = `${__dirname}/${options.folder}`;
+  const files = fs.readdirSync(imageFolderPath);
+  files.forEach((file) => {
+    const inputImagePath = `${imageFolderPath}/${file}`;
+    const outputImagePath = `${__dirname}/${options.output}/${file}`;
+    processImage(inputImagePath, outputImagePath, options);
+  });
+} else {
+  const imageName = path.basename(options.image);
+  const inputImagePath = `${__dirname}/${options.folder}/${imageName}`; // Provide your input image path here
+  const outputImagePath = `${__dirname}/${options.output}/${imageName}`; // Output image path
+
+  processImage(inputImagePath, outputImagePath, options);
+}
