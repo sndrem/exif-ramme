@@ -37,7 +37,7 @@ export function addExifDataToImage(
     .drawText(
       borderWidth,
       newHeight - 35,
-      `${LensID} - F ${FNumber} - ISO ${ISO} - ${ExposureTime}`
+      `${LensID} - f/${FNumber} - ${ExposureTime}s - ISO${ISO}`
     )
     .drawText(
       ImageWidth - 210,
