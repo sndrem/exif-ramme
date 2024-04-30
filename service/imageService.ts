@@ -1,7 +1,8 @@
 import {CliOptions} from "..";
 import {createFolderIfNotExists} from "./fileService";
 
-const gm = require("gm").subClass({imageMagick: true});
+import gm from "gm";
+const gmSubclass = gm.subClass({imageMagick: true});
 
 interface ExifData {
   ImageWidth: number;
@@ -20,7 +21,7 @@ export function addExifDataToImage(
   outputPath: string,
   options: CliOptions
 ) {
-  const {ImageWidth, ImageHeight, FNumber, ISO, Model, LensID, ExposureTime} =
+  const {ImageWidth, ImageHeight, FNumber, ISO, LensID, ExposureTime} =
     exifData;
 
   // Calculate border size based on image dimensions
@@ -29,7 +30,7 @@ export function addExifDataToImage(
 
   createFolderIfNotExists(options.output);
 
-  gm(imagePath)
+  gmSubclass(imagePath)
     .borderColor(options.color)
     .border(borderWidth, borderWidth)
     .font("Helvetica.ttf", 40)
@@ -44,7 +45,7 @@ export function addExifDataToImage(
       newHeight - 35,
       options.photographer ? options.photographer : ""
     )
-    .write(outputPath, function (err: Error) {
+    .write(outputPath, function (err) {
       if (!err) {
         console.log(`Image with EXIF data added saved at ${outputPath}`);
       } else {

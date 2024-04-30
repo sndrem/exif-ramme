@@ -1,7 +1,7 @@
 import {extractExifData} from "./service/exifService";
 import {addExifDataToImage} from "./service/imageService";
 import {Command, Option} from "@commander-js/extra-typings";
-const path = require("path");
+import path from "path";
 import fs from "fs";
 
 const program = new Command()
