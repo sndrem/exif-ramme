@@ -35,6 +35,17 @@ const program = new Command()
   .option(
     "-b, --batch",
     "Run the same settings on all images in the <image> folder"
+  )
+  .addOption(
+    new Option(
+      "-w, --width <border width>",
+      "Set the width of the border"
+    ).default("100")
+  )
+  .addOption(
+    new Option("-fs, --font-size <font size>", "Set the font size").default(
+      "30"
+    )
   );
 
 program.parse(process.argv);
@@ -65,9 +76,12 @@ if (options.batch) {
     processImage(inputImagePath, outputImagePath, options);
   });
 } else {
-  const imageName = path.basename(options.image);
-  const inputImagePath = `${__dirname}/${options.folder}/${imageName}`; // Provide your input image path here
-  const outputImagePath = `${__dirname}/${options.output}/${imageName}`; // Output image path
-
-  processImage(inputImagePath, outputImagePath, options);
+  if (options.image) {
+    const imageName = path.basename(options.image);
+    const inputImagePath = `${__dirname}/${options.folder}/${imageName}`; // Provide your input image path here
+    const outputImagePath = `${__dirname}/${options.output}/${imageName}`; // Output image path
+    processImage(inputImagePath, outputImagePath, options);
+  } else {
+    throw new Error("Image is not set");
+  }
 }

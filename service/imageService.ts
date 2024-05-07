@@ -25,7 +25,8 @@ export function addExifDataToImage(
     exifData;
 
   // Calculate border size based on image dimensions
-  const borderWidth = 100;
+  const borderWidth = Number(options.width);
+  const fontSize = Number(options.fontSize);
   const newHeight = ImageHeight + borderWidth * 2;
 
   createFolderIfNotExists(options.output);
@@ -33,16 +34,16 @@ export function addExifDataToImage(
   gmSubclass(imagePath)
     .borderColor(options.color)
     .border(borderWidth, borderWidth)
-    .font("Helvetica.ttf", 40)
+    .font("Helvetica.ttf", fontSize)
     .fill(options.color === "black" ? "white" : "black")
     .drawText(
       borderWidth,
-      newHeight - 35,
+      newHeight - borderWidth / 2,
       `${LensID} - f/${FNumber} - ${ExposureTime}s - ISO${ISO}`
     )
     .drawText(
       ImageWidth - 210,
-      newHeight - 35,
+      newHeight - borderWidth / 2,
       options.photographer ? options.photographer : ""
     )
     .write(outputPath, function (err) {
